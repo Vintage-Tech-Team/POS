@@ -27,7 +27,7 @@ async function seed() {
 
     // Create users with different roles
     const users = [
-      // { name: 'Admin User', email: 'admin@example.com', password: 'admin123', role: 'admin' },
+      { name: 'Admin User', email: 'admin@example.com', password: 'admin123', role: 'admin' },
       { name: 'Manager User', email: 'manager@example.com', password: 'manager123', role: 'manager' },
       { name: 'Cashier User', email: 'cashier@example.com', password: 'cashier123', role: 'cashier' },
       { name: 'Accountant User', email: 'accountant@example.com', password: 'accountant123', role: 'accountant' },
