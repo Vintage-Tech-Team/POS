@@ -25,16 +25,25 @@ async function seed() {
     const companyId = companyResult[0].id;
     console.log('✅ Created demo company');
 
-    // Create admin user
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    await AppDataSource.query(
-      `
-      INSERT INTO users (company_id, name, email, password_hash, role)
-      VALUES ($1, 'Admin User', 'admin@example.com', $2, 'admin')
-    `,
-      [companyId, hashedPassword],
-    );
-    console.log('✅ Created admin user (email: admin@example.com, password: admin123)');
+    // Create users with different roles
+    const users = [
+      // { name: 'Admin User', email: 'admin@example.com', password: 'admin123', role: 'admin' },
+      { name: 'Manager User', email: 'manager@example.com', password: 'manager123', role: 'manager' },
+      { name: 'Cashier User', email: 'cashier@example.com', password: 'cashier123', role: 'cashier' },
+      { name: 'Accountant User', email: 'accountant@example.com', password: 'accountant123', role: 'accountant' },
+    ];
+
+    for (const user of users) {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      await AppDataSource.query(
+        `
+        INSERT INTO users (company_id, name, email, password_hash, role)
+        VALUES ($1, $2, $3, $4, $5)
+      `,
+        [companyId, user.name, user.email, hashedPassword, user.role],
+      );
+      console.log(`✅ Created ${user.role} user (email: ${user.email}, password: ${user.password})`);
+    }
 
     // Create chart of accounts
     const accounts = [
@@ -159,10 +168,20 @@ async function seed() {
     console.log('✅ Created sample supplier');
 
     console.log('\n🎉 Seed completed successfully!');
-    console.log('\nLogin credentials:');
-    console.log('  Email: admin@example.com');
-    console.log('  Password: admin123');
-    console.log('\nYou can now start the backend with: npm run start:dev');
+    console.log('\n📋 Login Credentials:');
+    console.log('\n👤 Admin (Full Access):');
+    console.log('   Email: admin@example.com');
+    console.log('   Password: admin123');
+    console.log('\n👤 Manager (Sales, Purchases, Inventory, Reports):');
+    console.log('   Email: manager@example.com');
+    console.log('   Password: manager123');
+    console.log('\n👤 Cashier (POS & Sales Only):');
+    console.log('   Email: cashier@example.com');
+    console.log('   Password: cashier123');
+    console.log('\n👤 Accountant (Accounting & Reports):');
+    console.log('   Email: accountant@example.com');
+    console.log('   Password: accountant123');
+    console.log('\n✨ You can now start the backend with: npm run start:dev');
 
     await AppDataSource.destroy();
     process.exit(0);

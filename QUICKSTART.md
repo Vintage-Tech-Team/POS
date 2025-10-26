@@ -19,10 +19,27 @@ docker-compose up -d
 # - API Docs: http://localhost:3001/api/docs
 ```
 
-**Default Login:**
+**Default Login Credentials:**
+
+👤 **Admin (Full Access):**
 
 - Email: `admin@example.com`
 - Password: `admin123`
+
+👤 **Manager (Sales, Purchases, Inventory, Reports):**
+
+- Email: `manager@example.com`
+- Password: `manager123`
+
+👤 **Cashier (POS & Sales Only):**
+
+- Email: `cashier@example.com`
+- Password: `cashier123`
+
+👤 **Accountant (Accounting & Reports Only):**
+
+- Email: `accountant@example.com`
+- Password: `accountant123`
 
 ### Option 2: Manual Setup
 
