@@ -47,6 +47,12 @@ export class CreateProductDto {
   @Min(0)
   tax_percent?: number;
 
+  @ApiProperty({ example: 100, default: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  stock_quantity?: number;
+
   @ApiProperty({ example: 10, default: 0 })
   @IsOptional()
   @IsNumber()

@@ -62,6 +62,15 @@ export const productsApi = {
   getLowStock: () => api.get('/products/low-stock'),
 };
 
+// Categories API
+export const categoriesApi = {
+  getAll: () => api.get('/categories'),
+  getOne: (id: number) => api.get(`/categories/${id}`),
+  create: (data: any) => api.post('/categories', data),
+  update: (id: number, data: any) => api.put(`/categories/${id}`, data),
+  delete: (id: number) => api.delete(`/categories/${id}`),
+};
+
 // Customers API
 export const customersApi = {
   getAll: (search?: string) => api.get('/customers', { params: { search } }),

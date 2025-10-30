@@ -379,6 +379,78 @@ npm run seed
 4. **Use idempotency keys:** For POS sales to prevent duplicates
 5. **Backup regularly:** Use PostgreSQL backup tools
 
+## ✅ Testing Everything Works
+
+We've created comprehensive testing tools to verify all modules:
+
+### 1. Quick System Status
+
+```bash
+./system-status.sh
+```
+
+Shows real-time dashboard of stock, sales, and accounting.
+
+### 2. Automated Full Test
+
+```bash
+./test-workflow.sh
+```
+
+Runs a complete purchase → sale → accounting → reports workflow.
+
+### 3. Data Integrity Check
+
+```bash
+./verify-data-integrity.sh
+```
+
+Verifies all data is consistent across modules.
+
+### 4. Manual Testing
+
+See `TESTING_GUIDE.md` for step-by-step testing scenarios covering:
+
+- Stock increases on purchase ✅
+- Stock decreases on sale ✅
+- Automatic accounting vouchers ✅
+- P&L profit calculations ✅
+- Role-based access control ✅
+- Low stock alerts ✅
+
+### 5. Quick Reference
+
+See `TEST_REFERENCE.md` for:
+
+- All test user credentials
+- Sample data details
+- Expected calculation results
+- Common troubleshooting
+
+### Expected Test Results
+
+After running `test-workflow.sh`, verify:
+
+**Stock Flow:**
+
+```
+Purchase: +20 units → Sale: -5 units → Net: +15 units
+```
+
+**Accounting:**
+
+```
+Every sale creates balanced voucher (Debit = Credit)
+P&L shows positive profit
+```
+
+**Reports:**
+
+```
+Daily sales matches actual transactions
+Inventory valuation accurate
+```
+
 ## 🆘 Need Help?
 
 Check the main README.md for:

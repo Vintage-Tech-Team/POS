@@ -26,10 +26,14 @@ export class InventoryController {
   @ApiQuery({ name: 'warehouseId', required: false, type: Number })
   getStock(
     @CurrentUser() user: any,
-    @Query('productId') productId?: number,
-    @Query('warehouseId') warehouseId?: number,
+    @Query('productId') productId?: string,
+    @Query('warehouseId') warehouseId?: string,
   ) {
-    return this.inventoryService.getStock(user.companyId, productId, warehouseId);
+    return this.inventoryService.getStock(
+      user.companyId,
+      productId ? parseInt(productId, 10) : undefined,
+      warehouseId ? parseInt(warehouseId, 10) : undefined,
+    );
   }
 
   @Get('movements')
@@ -39,7 +43,7 @@ export class InventoryController {
   @ApiQuery({ name: 'endDate', required: false, type: Date })
   getMovements(
     @CurrentUser() user: any,
-    @Query('productId') productId?: number,
+    @Query('productId') productId?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
@@ -47,7 +51,7 @@ export class InventoryController {
     const end = endDate ? new Date(endDate) : undefined;
     return this.inventoryService.getStockMovements(
       user.companyId,
-      productId,
+      productId ? parseInt(productId, 10) : undefined,
       start,
       end,
     );

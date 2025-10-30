@@ -116,35 +116,91 @@ Password: admin123
 The API follows RESTful conventions. Key endpoints:
 
 ### Authentication
+
 - `POST /api/auth/register` - Register company + admin
 - `POST /api/auth/login` - Login
 - `POST /api/auth/refresh` - Refresh token
 
 ### Products
+
 - `GET /api/products` - List products
 - `POST /api/products` - Create product
 - `POST /api/products/:id/generate-barcode` - Generate barcode
 
 ### Sales (POS)
+
 - `POST /api/sales/pos` - Create POS sale
 - `GET /api/sales` - List sales
 - `POST /api/sales/:id/return` - Process return
 
 ### Purchases
+
 - `POST /api/purchases` - Create purchase
 - `POST /api/purchases/:id/payment` - Record payment
 
 ### Inventory
+
 - `GET /api/inventory/stock` - Current stock levels
 - `POST /api/inventory/adjust` - Manual adjustment
 
 ### Accounting
+
 - `GET /api/accounting/coa` - Chart of accounts
 - `GET /api/accounting/pnl` - Profit & Loss report
 
+## Testing
+
+### Quick Start Testing
+
+We provide comprehensive testing tools to verify all modules work correctly:
+
+1. **Automated Test Workflow** - Runs a complete purchase-to-sale scenario:
+
+```bash
+./test-workflow.sh
+```
+
+2. **Data Integrity Check** - Verifies data consistency:
+
+```bash
+./verify-data-integrity.sh
+```
+
+3. **Manual Testing Guide** - Step-by-step testing scenarios:
+
+```bash
+# See TESTING_GUIDE.md for detailed instructions
+```
+
+4. **Quick Reference** - Test credentials and expected results:
+
+```bash
+# See TEST_REFERENCE.md for quick lookups
+```
+
+### Test User Credentials
+
+| Role       | Email                  | Password      |
+| ---------- | ---------------------- | ------------- |
+| Admin      | admin@example.com      | admin123      |
+| Manager    | manager@example.com    | manager123    |
+| Cashier    | cashier@example.com    | cashier123    |
+| Accountant | accountant@example.com | accountant123 |
+
+### What to Test
+
+- ✅ **Stock Management**: Purchase increases stock, sales decrease it
+- ✅ **Accounting**: Auto-generated vouchers with balanced entries
+- ✅ **Reports**: P&L, daily sales, inventory valuation
+- ✅ **Role-based Access**: Different user roles see different menus
+- ✅ **POS**: Barcode scanning, product search, cart operations
+- ✅ **Data Integrity**: Stock, sales, and accounting all synchronized
+
+📚 **See `TESTING_GUIDE.md` for complete testing procedures**
+
 ## Development
 
-### Running Tests
+### Running Unit Tests
 
 ```bash
 # Backend unit tests
@@ -192,12 +248,14 @@ docker-compose down
 ### Manual Deployment
 
 1. Build the frontend:
+
 ```bash
 cd frontend
 npm run build
 ```
 
 2. Build the backend:
+
 ```bash
 cd backend
 npm run build
@@ -219,6 +277,7 @@ npm run build
 ## Contributing
 
 This is an MVP. Future enhancements:
+
 - Advanced inventory valuation (FIFO, Weighted Average)
 - Multi-currency support
 - Email notifications
@@ -229,5 +288,3 @@ This is an MVP. Future enhancements:
 ## License
 
 MIT
-
-

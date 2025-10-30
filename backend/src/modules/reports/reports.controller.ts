@@ -58,13 +58,13 @@ export class ReportsController {
     @CurrentUser() user: any,
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
-    @Query('limit') limit?: number,
+    @Query('limit') limit?: string,
   ) {
     return this.reportsService.getTopSellingProducts(
       user.companyId,
       new Date(startDate),
       new Date(endDate),
-      limit || 10,
+      limit ? parseInt(limit, 10) : 10,
     );
   }
 

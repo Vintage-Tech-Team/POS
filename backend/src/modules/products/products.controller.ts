@@ -41,16 +41,16 @@ export class ProductsController {
   findAll(
     @CurrentUser() user: any,
     @Query('search') search?: string,
-    @Query('categoryId') categoryId?: number,
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
+    @Query('categoryId') categoryId?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
     return this.productsService.findAll(
       user.companyId,
       search,
-      categoryId,
-      page,
-      limit,
+      categoryId ? parseInt(categoryId, 10) : undefined,
+      page ? parseInt(page, 10) : undefined,
+      limit ? parseInt(limit, 10) : undefined,
     );
   }
 
