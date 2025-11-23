@@ -12,18 +12,22 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger'
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../auth/entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PurchaseStatus } from './entities/purchase.entity';
 
 @ApiTags('purchases')
 @Controller('purchases')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new purchase' })
+  @Roles(UserRole.ADMIN, UserRole.MANAGER)
+  @ApiOperation({ summary: 'Create a new purchase (Admin/Manager only)' })
   create(
     @CurrentUser() user: any,
     @Body() createPurchaseDto: CreatePurchaseDto,
@@ -54,7 +58,8 @@ export class PurchasesController {
   }
 
   @Post(':id/payment')
-  @ApiOperation({ summary: 'Record payment to supplier' })
+  @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.ACCOUNTANT)
+  @ApiOperation({ summary: 'Record payment to supplier (Admin/Manager/Accountant only)' })
   recordPayment(
     @CurrentUser() user: any,
     @Param('id', ParseIntPipe) id: number,

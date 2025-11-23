@@ -8,12 +8,74 @@ We'll simulate a complete business day with purchases, sales, and financial repo
 
 ---
 
+## 📚 Related Documentation
+
+- **[QUICKSTART.md](./QUICKSTART.md)** - Getting started guide
+- **[README.md](./README.md)** - Project overview and setup instructions
+
+---
+
+## 🆕 What's New in This Testing Guide
+
+This guide now includes comprehensive testing for:
+
+- ✅ **Admin CRUD Operations** - Customer, Supplier, and Purchase management
+- ✅ **Role-Based Access Control** - Testing permissions for Admin, Manager, Cashier roles
+- ✅ **Frontend UI Testing** - Modal dialogs, search functionality, form validation
+- ✅ **API Security Testing** - JWT authentication and role authorization
+- ✅ **Data Integrity** - Verify inventory and accounting updates from purchases
+
+---
+
+## 📑 Table of Contents
+
+### Core System Tests
+
+- [Test 1: Verify Initial State](#test-1-verify-initial-state)
+- [Test 2: Purchase Flow (Stock In)](#test-2-purchase-flow-stock-in)
+- [Test 3: POS Sale Flow (Stock Out)](#test-3-pos-sale-flow-stock-out)
+- [Test 4: Multiple Sales (Realistic Day)](#test-4-multiple-sales-realistic-day)
+- [Test 5: Reports & Analytics](#test-5-reports--analytics)
+- [Test 6: Low Stock Alerts](#test-6-low-stock-alerts)
+
+### Admin CRUD & Role Tests (NEW)
+
+- [Test 7: Admin CRUD Operations](#test-7-admin-crud-operations-customers-suppliers-purchases) ⭐ NEW
+  - Customer Management (Create, Update, Delete, Search)
+  - Supplier Management (Create, Update, Delete, Search)
+  - Purchase Creation (Multi-item, Auto-calculations)
+  - Role-Based Access (Manager, Cashier testing)
+  - API Security Testing
+- [Test 8: User Role Permissions](#test-8-user-role-permissions-original-tests)
+
+### Data Integrity & Edge Cases
+
+- [Test 9: Data Integrity Checks](#test-9-data-integrity-checks)
+- [Test 10: Edge Cases](#test-10-edge-cases)
+- [Test 11: End-of-Day Verification](#test-11-end-of-day-verification)
+
+### Quick Reference
+
+- [Quick Daily Test (5 min)](#-quick-daily-test-5-minutes)
+- [Quick Admin CRUD Test (5 min)](#-quick-admin-crud-test-5-minutes) ⭐ NEW
+- [Complete Role Permission Matrix](#-complete-role-permission-matrix) ⭐ NEW
+- [API Endpoints for Testing](#-api-endpoints-for-testing) ⭐ NEW
+
+---
+
 ## 📋 Prerequisites
 
 1. **Database is seeded** with sample data
 2. **Backend running** on http://localhost:3001
 3. **Frontend running** on http://localhost:3000
 4. **Login as Admin**: admin@example.com / admin123
+
+**Quick Start:**
+
+```bash
+# From project root
+npm run dev
+```
 
 ---
 
@@ -281,9 +343,292 @@ Sample Product A has reorder level: 10
 
 ---
 
-## Test 7: User Role Permissions
+## Test 7: Admin CRUD Operations (Customers, Suppliers, Purchases)
 
-### Step 7.1: Test Cashier Access
+### Step 7.1: Test Customer Management (Admin)
+
+**Create Customer:**
+
+1. Login as Admin
+2. Go to **Customers** page
+3. Click **"Add Customer"** button (top right)
+4. Fill in form:
+   - Name: "John Smith" (required)
+   - Phone: "+1234567890"
+   - Email: "john@example.com"
+   - Address: "123 Main St"
+5. Click **"Create"**
+
+**Expected Result:**
+
+- ✅ Success toast notification
+- ✅ Customer appears in table
+- ✅ Search bar is visible
+
+**Update Customer:**
+
+1. Find "John Smith" in the list
+2. Click **"Edit"** button
+3. Change phone to "+0987654321"
+4. Click **"Update"**
+
+**Expected Result:**
+
+- ✅ Success toast notification
+- ✅ Updated phone shows in table
+
+**Search Customer:**
+
+1. Type "john" in search bar
+2. Results should filter in real-time
+
+**Expected Result:**
+
+- ✅ Only matching customers shown
+- ✅ Search works for name, phone, email
+
+**Delete Customer (Admin only):**
+
+1. Click **"Delete"** button next to "John Smith"
+2. Confirm deletion in popup
+
+**Expected Result:**
+
+- ✅ Confirmation dialog appears
+- ✅ Customer removed from list
+- ✅ Success toast notification
+
+### Step 7.2: Test Supplier Management (Admin)
+
+**Create Supplier:**
+
+1. Go to **Suppliers** page
+2. Click **"Add Supplier"** button
+3. Fill in form:
+   - Name: "Tech Supplies Inc" (required)
+   - Phone: "+1555123456"
+   - Email: "sales@techsupplies.com"
+   - Address: "456 Business Ave"
+4. Click **"Create"**
+
+**Expected Result:**
+
+- ✅ Success toast notification
+- ✅ Supplier appears in table with $0.00 balance
+
+**Update Supplier:**
+
+1. Find "Tech Supplies Inc" in the list
+2. Click **"Edit"** button
+3. Update email to "info@techsupplies.com"
+4. Click **"Update"**
+
+**Expected Result:**
+
+- ✅ Changes saved successfully
+- ✅ Updated email visible in table
+
+**Delete Supplier:**
+
+1. Click **"Delete"** button
+2. Confirm deletion
+
+**Expected Result:**
+
+- ✅ Supplier removed from list
+
+### Step 7.3: Test Purchase Creation (Admin/Manager)
+
+**Create Purchase:**
+
+1. Go to **Purchases** page
+2. Click **"New Purchase"** button
+3. Fill in purchase header:
+
+   - Invoice No: Auto-generated (e.g., PUR-1234567890)
+   - Date: Today's date (default)
+   - Supplier: Select "ABC Suppliers Ltd"
+   - Notes: "Test purchase order"
+
+4. Add items:
+
+   - Click **"+ Add Item"**
+   - Select "Sample Product A" from dropdown
+   - Qty: 10
+   - Unit Price: $50 (auto-filled from product cost)
+   - Tax: $50
+   - Discount: $0
+
+5. Add second item:
+
+   - Click **"+ Add Item"** again
+   - Select "Sample Product B"
+   - Qty: 5
+   - Unit Price: $30
+   - Tax: $15
+   - Discount: $0
+
+6. Verify total: $615 ((10×50 + 50) + (5×30 + 15))
+7. Click **"Create Purchase"**
+
+**Expected Result:**
+
+- ✅ Success toast notification
+- ✅ Purchase appears in list
+- ✅ Stock increased for both products
+- ✅ Accounting voucher created automatically
+
+**Verify Purchase Effects:**
+
+1. Go to **Inventory**
+
+   - Sample Product A stock increased by 10
+   - Sample Product B stock increased by 5
+
+2. Go to **Accounting** → Vouchers
+   - New voucher created
+   - Debit: COGS (5000) = $615
+   - Credit: Accounts Payable (2000) = $615
+
+**Expected Result:** ✅ All systems updated correctly
+
+### Step 7.4: Test Role-Based Access (Manager)
+
+**Login as Manager:**
+
+1. Logout from Admin
+2. Login as manager@example.com / manager123
+
+**Test Customer Management:**
+
+1. Go to **Customers**
+2. Verify "Add Customer" button is visible
+3. Create a new customer
+4. Edit an existing customer
+5. Try to find "Delete" button
+
+**Expected Result:**
+
+- ✅ Can view customers
+- ✅ Can create customers
+- ✅ Can edit customers
+- ❌ Delete button NOT visible (Admin only)
+
+**Test Supplier Management:**
+
+1. Go to **Suppliers**
+2. Verify "Add Supplier" button is visible
+3. Create a new supplier
+4. Try to find "Delete" button
+
+**Expected Result:**
+
+- ✅ Can create and edit suppliers
+- ❌ Cannot delete suppliers
+
+**Test Purchase Creation:**
+
+1. Go to **Purchases**
+2. Verify "New Purchase" button is visible
+3. Create a purchase
+
+**Expected Result:**
+
+- ✅ Manager can create purchases
+
+### Step 7.5: Test Role-Based Access (Cashier)
+
+**Login as Cashier:**
+
+1. Logout
+2. Login as cashier@example.com / cashier123
+
+**Test Customer Access:**
+
+1. Go to **Customers**
+2. Check for action buttons
+
+**Expected Result:**
+
+- ✅ Can view customer list
+- ❌ No "Add Customer" button
+- ❌ No "Edit" buttons
+- ❌ No "Delete" buttons
+- ✅ Search bar still works (read-only)
+
+**Test Supplier Access:**
+
+1. Go to **Suppliers**
+2. Check for action buttons
+
+**Expected Result:**
+
+- ✅ Can view suppliers (read-only)
+- ❌ No create/edit/delete buttons
+
+**Test Purchase Access:**
+
+1. Go to **Purchases**
+2. Check for action buttons
+
+**Expected Result:**
+
+- ✅ Can view purchase list
+- ❌ No "New Purchase" button
+- ✅ Can see all purchase details
+
+### Step 7.6: Test Role Permissions via API
+
+**Test Admin Delete (Should succeed):**
+
+```bash
+# Login as Admin
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@example.com", "password": "admin123"}'
+
+# Delete customer (Admin only)
+curl -X DELETE http://localhost:3001/api/customers/1 \
+  -H "Authorization: Bearer ADMIN_TOKEN"
+```
+
+**Expected:** ✅ 200 OK - Customer deleted
+
+**Test Manager Delete (Should fail):**
+
+```bash
+# Login as Manager
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "manager@example.com", "password": "manager123"}'
+
+# Try to delete (should fail)
+curl -X DELETE http://localhost:3001/api/customers/1 \
+  -H "Authorization: Bearer MANAGER_TOKEN"
+```
+
+**Expected:** ❌ 403 Forbidden - Insufficient permissions
+
+**Test Cashier Create (Should fail):**
+
+```bash
+# Login as Cashier
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "cashier@example.com", "password": "cashier123"}'
+
+# Try to create customer (should fail)
+curl -X POST http://localhost:3001/api/customers \
+  -H "Authorization: Bearer CASHIER_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test Customer"}'
+```
+
+**Expected:** ❌ 403 Forbidden - Insufficient permissions
+
+## Test 8: User Role Permissions (Original Tests)
+
+### Step 8.1: Test Cashier Access
 
 1. Logout
 2. Login as: cashier@example.com / cashier123
@@ -299,7 +644,7 @@ Sample Product A has reorder level: 10
 - ✅ Limited menu items
 - ✅ Blocked from restricted pages
 
-### Step 7.2: Test Manager Access
+### Step 8.2: Test Manager Access
 
 1. Logout
 2. Login as: manager@example.com / manager123
@@ -309,7 +654,7 @@ Sample Product A has reorder level: 10
 
 **Expected Result:** ✅ Manager has operational access
 
-### Step 7.3: Test Accountant Access
+### Step 8.3: Test Accountant Access
 
 1. Logout
 2. Login as: accountant@example.com / accountant123
@@ -322,7 +667,7 @@ Sample Product A has reorder level: 10
 
 ---
 
-## Test 8: Data Integrity Checks
+## Test 9: Data Integrity Checks
 
 ### Step 8.1: Verify Stock Movement Records
 
@@ -360,7 +705,7 @@ For each sale:
 
 ---
 
-## Test 9: Edge Cases
+## Test 10: Edge Cases
 
 ### Step 9.1: Try to Sell Out of Stock
 
@@ -386,7 +731,7 @@ Try creating purchase with same invoice_no twice
 
 ---
 
-## Test 10: End-of-Day Verification
+## Test 11: End-of-Day Verification
 
 ### Final Checklist:
 
@@ -555,6 +900,164 @@ If all 5 steps work, your system is functioning correctly! ✅
 
 ---
 
+## 🎯 Quick Admin CRUD Test (5 minutes)
+
+To quickly verify admin functionality:
+
+1. **Login as Admin**
+2. **Create a Customer**: Dashboard → Customers → Add Customer → Save
+3. **Create a Supplier**: Dashboard → Suppliers → Add Supplier → Save
+4. **Create a Purchase**: Dashboard → Purchases → New Purchase → Add items → Create
+5. **Verify Inventory**: Check stock increased
+6. **Test Search**: Search for customer/supplier by name
+7. **Login as Manager**: Verify can edit but not delete
+8. **Login as Cashier**: Verify read-only access
+
+If all 8 steps work with correct permissions, your CRUD system is functioning correctly! ✅
+
+---
+
+## 📊 Complete Role Permission Matrix
+
+Quick reference for testing role-based access:
+
+| Feature        | Admin | Manager | Accountant | Cashier |
+| -------------- | ----- | ------- | ---------- | ------- |
+| **Customers**  |
+| View           | ✅    | ✅      | ✅         | ✅      |
+| Create         | ✅    | ✅      | ❌         | ❌      |
+| Edit           | ✅    | ✅      | ❌         | ❌      |
+| Delete         | ✅    | ❌      | ❌         | ❌      |
+| **Suppliers**  |
+| View           | ✅    | ✅      | ✅         | ✅      |
+| Create         | ✅    | ✅      | ❌         | ❌      |
+| Edit           | ✅    | ✅      | ❌         | ❌      |
+| Delete         | ✅    | ❌      | ❌         | ❌      |
+| **Purchases**  |
+| View           | ✅    | ✅      | ✅         | ✅      |
+| Create         | ✅    | ✅      | ❌         | ❌      |
+| Payment        | ✅    | ✅      | ✅         | ❌      |
+| **Products**   |
+| Manage         | ✅    | ✅      | ❌         | ❌      |
+| **POS**        |
+| Sales          | ✅    | ✅      | ❌         | ✅      |
+| **Accounting** |
+| Access         | ✅    | ❌      | ✅         | ❌      |
+| **Reports**    |
+| View           | ✅    | ✅      | ✅         | ❌      |
+
+Use this matrix to verify each role has appropriate access during testing.
+
+---
+
+## 🔗 API Endpoints for Testing
+
+### Admin CRUD Endpoints
+
+**Customers:**
+
+```bash
+GET    /api/customers              # View all (All roles)
+GET    /api/customers/:id          # View one (All roles)
+POST   /api/customers              # Create (Admin/Manager)
+PUT    /api/customers/:id          # Update (Admin/Manager)
+DELETE /api/customers/:id          # Delete (Admin only)
+```
+
+**Suppliers:**
+
+```bash
+GET    /api/suppliers              # View all (All roles)
+GET    /api/suppliers/:id          # View one (All roles)
+POST   /api/suppliers              # Create (Admin/Manager)
+PUT    /api/suppliers/:id          # Update (Admin/Manager)
+DELETE /api/suppliers/:id          # Delete (Admin only)
+```
+
+**Purchases:**
+
+```bash
+GET    /api/purchases              # View all (All roles)
+GET    /api/purchases/:id          # View one (All roles)
+POST   /api/purchases              # Create (Admin/Manager)
+POST   /api/purchases/:id/payment  # Payment (Admin/Manager/Accountant)
+```
+
+---
+
+## 🐛 Common Issues & Troubleshooting
+
+### Admin CRUD Issues
+
+**Issue: Role-based buttons not showing/hiding correctly**
+
+**Symptoms:**
+
+- Admin sees buttons but manager doesn't
+- Cashier sees edit buttons
+
+**Solutions:**
+
+1. Clear browser localStorage and re-login
+2. Check user role in localStorage: `localStorage.getItem('user')`
+3. Verify JWT token contains correct role
+4. Check console for authentication errors
+
+---
+
+**Issue: 403 Forbidden error when creating/editing**
+
+**Symptoms:**
+
+- Button is visible but API call fails
+- Toast error: "Forbidden"
+
+**Solutions:**
+
+1. Verify user role is correct (Admin or Manager required)
+2. Check JWT token hasn't expired
+3. Re-login to get fresh token
+4. Verify backend RolesGuard is properly configured
+
+---
+
+**Issue: Purchase creation doesn't update inventory**
+
+**Symptoms:**
+
+- Purchase is created but stock doesn't increase
+- No error shown
+
+**Solutions:**
+
+1. Check backend logs for transaction errors
+2. Verify inventory service is running
+3. Check database transaction was committed
+4. Look for rollback messages in logs
+
+---
+
+**Issue: Search not working**
+
+**Symptoms:**
+
+- Search bar doesn't filter results
+- Results remain the same
+
+**Solutions:**
+
+1. Check network tab for API calls
+2. Verify search parameter is being sent
+3. Clear search and try again
+4. Check backend search query logic
+
+---
+
 **Happy Testing! 🚀**
 
 If you find any issues during testing, check backend logs and database state to debug.
+
+For more information, refer to:
+
+- **[README.md](./README.md)** - Project overview and setup
+- **[QUICKSTART.md](./QUICKSTART.md)** - Quick start guide

@@ -17,6 +17,9 @@ interface AuthStore {
   setAuth: (user: User, token: string) => void;
   logout: () => void;
   isAuthenticated: () => boolean;
+  isAdmin: () => boolean;
+  isManager: () => boolean;
+  hasRole: (roles: string[]) => boolean;
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
@@ -39,6 +42,18 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   isAuthenticated: () => {
     const { token } = get();
     return !!token;
+  },
+  isAdmin: () => {
+    const { user } = get();
+    return user?.role === 'admin';
+  },
+  isManager: () => {
+    const { user } = get();
+    return user?.role === 'manager';
+  },
+  hasRole: (roles: string[]) => {
+    const { user } = get();
+    return user && roles.includes(user.role);
   },
 }));
 

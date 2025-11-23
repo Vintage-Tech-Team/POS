@@ -14,17 +14,21 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../auth/entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('customers')
 @Controller('customers')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new customer' })
+  @Roles(UserRole.ADMIN, UserRole.MANAGER)
+  @ApiOperation({ summary: 'Create a new customer (Admin/Manager only)' })
   create(@CurrentUser() user: any, @Body() createCustomerDto: CreateCustomerDto) {
     return this.customersService.create(user.companyId, createCustomerDto);
   }
@@ -42,7 +46,8 @@ export class CustomersController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update a customer' })
+  @Roles(UserRole.ADMIN, UserRole.MANAGER)
+  @ApiOperation({ summary: 'Update a customer (Admin/Manager only)' })
   update(
     @CurrentUser() user: any,
     @Param('id', ParseIntPipe) id: number,
@@ -52,7 +57,8 @@ export class CustomersController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a customer' })
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Delete a customer (Admin only)' })
   remove(@CurrentUser() user: any, @Param('id', ParseIntPipe) id: number) {
     return this.customersService.remove(id, user.companyId);
   }
