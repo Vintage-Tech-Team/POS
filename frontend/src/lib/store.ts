@@ -45,15 +45,15 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
   isAdmin: () => {
     const { user } = get();
-    return user?.role === 'admin';
+    return user?.role === 'admin' || false;
   },
   isManager: () => {
     const { user } = get();
-    return user?.role === 'manager';
+    return user?.role === 'manager' || false;
   },
   hasRole: (roles: string[]) => {
     const { user } = get();
-    return user && roles.includes(user.role);
+    return user ? roles.includes(user.role) : false;
   },
 }));
 
